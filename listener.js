@@ -11,6 +11,13 @@ const express = require('express'),
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+//Error Handling middleware
+app.use((err, req, res, next) => {
+	console.log(prettyjson.render(err, options));
+	res.status(500).json({ error: 'Something went wrong hence INternal Server error' });
+});
+
 /*
 	B2C ResultURL
 	URL: /b2c/result
