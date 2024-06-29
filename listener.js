@@ -7,9 +7,25 @@ const options = {
 const express = require('express'),
     bodyParser = require('body-parser'),
     app = express();
+const morgan = require('morgan');
+const { check, validationResult } = require('express-validator');
 
+app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Middleware to handle validation errors
+const validateRequest = [
+    check('transactionID').notEmpty().withMessage('transactionID is required'),
+    check('amount').isNumeric().withMessage('amount must be a number'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
 
 /*
 	B2C ResultURL
